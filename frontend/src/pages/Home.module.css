@@ -2,13 +2,16 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
 }
 
 .header {
-  padding: 1.25rem 2rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
+  box-shadow: var(--shadow-sm);
 }
 
 .logo {
@@ -18,10 +21,10 @@
 }
 
 .logoMark {
-  width: 32px;
-  height: 32px;
-  background: var(--accent);
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,34 +32,35 @@
   font-weight: 700;
   font-size: 1rem;
   color: #fff;
+  box-shadow: 0 2px 8px #3b82f630;
 }
 
 .logoText {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.15rem;
   color: var(--text);
 }
 
 .main {
   flex: 1;
-  max-width: 860px;
+  max-width: 680px;
   width: 100%;
   margin: 0 auto;
-  padding: 3rem 1.5rem 2rem;
+  padding: 2.5rem 1.25rem 2rem;
 }
 
 .hero {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .headline {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--text);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.6rem;
 }
 
 .accent {
@@ -64,37 +68,38 @@
 }
 
 .subheadline {
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-muted);
 }
 
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
 .card {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
+  padding: 1.1rem 1.25rem;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   text-align: left;
-  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
   width: 100%;
+  box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
   border-color: var(--card-color);
-  background: var(--surface-2);
-  transform: translateX(4px);
+  box-shadow: 0 4px 20px rgba(59,130,246,0.1);
+  transform: translateY(-1px);
 }
 
 .cardIcon {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
   width: 44px;
   height: 44px;
@@ -103,55 +108,47 @@
   justify-content: center;
   background: var(--surface-2);
   border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
 }
 
-.cardBody {
-  flex: 1;
-}
+.cardBody { flex: 1; }
 
 .cardTitle {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
 }
 
 .cardDesc {
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .cardArrow {
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: 1rem;
   flex-shrink: 0;
   transition: color 0.2s, transform 0.2s;
 }
 
 .card:hover .cardArrow {
   color: var(--card-color);
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 .footer {
   padding: 1.5rem;
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
-.footer a {
-  color: var(--accent);
-}
+.footer a { color: var(--accent); }
 
 @media (max-width: 600px) {
-  .main {
-    padding: 2rem 1rem 1.5rem;
+  .main { padding: 1.75rem 1rem 1.5rem; }
+  .headline { font-size: 1.6rem; }
   }
-
-  .headline {
-    font-size: 1.75rem;
-  }
-}
