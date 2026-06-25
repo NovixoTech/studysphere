@@ -6,10 +6,14 @@ const ai = new NovixoAI({
     gemini: process.env.GEMINI_API_KEY,
   },
   providers: ["groq", "gemini"],
+  models: {
+    groq: "llama-3.3-70b-versatile",
+    gemini: "gemini-2.0-flash",
+  },
   maxTokens: 2048,
   temperature: 0.7,
   cache: true,
-  cacheTTL: 3 * 60 * 1000, // 3 minutes
+  cacheTTL: 3 * 60 * 1000,
 });
 
 export default ai;
