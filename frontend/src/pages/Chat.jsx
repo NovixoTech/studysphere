@@ -40,7 +40,8 @@ const MODE_CONFIG = {
   },
 };
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+// Hardcoded backend URL
+const API_URL = "https://studysphere-api-production.up.railway.app";
 
 export default function Chat() {
   const { mode } = useParams();
@@ -56,7 +57,6 @@ export default function Chat() {
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Track online/offline status
   useEffect(() => {
     const onOnline = () => setIsOffline(false);
     const onOffline = () => setIsOffline(true);
@@ -68,12 +68,10 @@ export default function Chat() {
     };
   }, []);
 
-  // Auto-scroll to bottom
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Auto-resize textarea
   useEffect(() => {
     const ta = textareaRef.current;
     if (!ta) return;
@@ -109,7 +107,6 @@ export default function Chat() {
       setMessages([...updatedMessages, { role: "assistant", content: data.text, provider: data.provider }]);
     } catch (err) {
       setError(err.message);
-      // Remove the user message if it failed
       setMessages(messages);
     } finally {
       setLoading(false);
@@ -130,7 +127,6 @@ export default function Chat() {
 
   return (
     <div className={styles.page} style={{ "--mode-color": config.color }}>
-      {/* Header */}
       <header className={styles.header}>
         <button className={styles.back} onClick={() => navigate("/")}>
           ← Back
@@ -151,7 +147,6 @@ export default function Chat() {
         </div>
       </header>
 
-      {/* Messages */}
       <div className={styles.messages}>
         {messages.length === 0 && (
           <div className={styles.welcome}>
@@ -208,7 +203,6 @@ export default function Chat() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className={styles.inputArea}>
         <div className={styles.inputBox}>
           <textarea
@@ -235,7 +229,6 @@ export default function Chat() {
   );
 }
 
-// Simple formatter: convert **bold**, newlines, bullet points
 function formatResponse(text) {
   return text
     .replace(/&/g, "&amp;")
