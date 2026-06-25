@@ -92,10 +92,13 @@ export default function Chat() {
     setError(null);
 
     try {
+      // Strip any extra fields before sending to API
+      const cleanMessages = updatedMessages.map(({ role, content }) => ({ role, content }));
+
       const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode, messages: updatedMessages }),
+        body: JSON.stringify({ mode, messages: cleanMessages }),
       });
 
       if (!res.ok) {
