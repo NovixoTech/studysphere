@@ -281,4 +281,30 @@
 @media (max-width: 600px) {
   .msgContent { max-width: 88%; }
   .hint { display: none; }
-  }
+}
+
+.savedBadge {
+  font-size: 0.75rem;
+  background: #f0fdf4;
+  color: var(--success);
+  border: 1px solid #bbf7d0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.retryBtn {
+  margin-left: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--error);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
