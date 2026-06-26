@@ -2,15 +2,17 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import chatRouter from "./routes/chat.js";
+import authRouter from "./routes/auth.js";
+import userRouter from "./routes/user.js";
+import examRouter from "./routes/exam.js";
+import feedRouter from "./routes/feed.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Allow all origins for now
 app.use(cors());
-
 app.use(express.json());
 
 // Health check
@@ -19,7 +21,11 @@ app.get("/health", (req, res) => {
 });
 
 // Routes
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
 app.use("/api/chat", chatRouter);
+app.use("/exam", examRouter);
+app.use("/feed", feedRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {
