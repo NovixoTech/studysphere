@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 import styles from "./Chat.module.css";
 
 const MODE_CONFIG = {
@@ -40,7 +41,6 @@ const MODE_CONFIG = {
   },
 };
 
-const API_URL = "https://studysphere-api-production.up.railway.app";
 const MAX_STORED_MESSAGES = 50;
 
 function getStorageKey(mode) {
@@ -58,12 +58,9 @@ function loadMessages(mode) {
 
 function saveMessages(mode, messages) {
   try {
-    // Only keep last 50 messages to avoid storage limits
     const toSave = messages.slice(-MAX_STORED_MESSAGES);
     localStorage.setItem(getStorageKey(mode), JSON.stringify(toSave));
-  } catch {
-    // Storage full or unavailable — fail silently
-  }
+  } catch {}
 }
 
 function getFriendlyError(err) {
@@ -77,8 +74,8 @@ function getFriendlyError(err) {
   if (msg.includes("All AI providers failed")) {
     return "All AI services are busy right now. Please try again in a minute.";
   }
-  if (msg.includes("API key")) {
-    return "There's a configuration issue. Please contact support.";
+  if (msg.includes("Unauthorized") || msg.includes("401")) {
+    return "Your session expired. Please login again.";
   }
   return "Something went wrong. Please try again.";
 }
@@ -86,6 +83,7 @@ function getFriendlyError(err) {
 export default function Chat() {
   const { mode } = useParams();
   const navigate = useNavigate();
+  const { token, user, authFetch } = useAuth();
   const config = MODE_CONFIG[mode] || MODE_CONFIG.study;
 
   const [messages, setMessages] = useState(() => loadMessages(mode));
@@ -98,7 +96,17 @@ export default function Chat() {
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Track online/offline
+  // Check for quick message from dashboard
+  useEffect(() => {
+    const quickMsg = localStorage.getItem("ss_quick_message");
+    const quickMode = localStorage.getItem("ss_quick_mode");
+    if (quickMsg && quickMode === mode) {
+      setInput(quickMsg);
+      localStorage.removeItem("ss_quick_message");
+      localStorage.removeItem("ss_quick_mode");
+    }
+  }, [mode]);
+
   useEffect(() => {
     const onOnline = () => setIsOffline(false);
     const onOffline = () => setIsOffline(true);
@@ -110,7 +118,6 @@ export default function Chat() {
     };
   }, []);
 
-  // Save messages to localStorage whenever they change
   useEffect(() => {
     if (messages.length > 0) {
       saveMessages(mode, messages);
@@ -120,12 +127,10 @@ export default function Chat() {
     }
   }, [messages, mode]);
 
-  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Auto-resize textarea
   useEffect(() => {
     const ta = textareaRef.current;
     if (!ta) return;
@@ -148,11 +153,21 @@ export default function Chat() {
     try {
       const cleanMessages = updatedMessages.map(({ role, content }) => ({ role, content }));
 
-      const res = await fetch(`${API_URL}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode, messages: cleanMessages }),
-      });
+      // Use authFetch if logged in, otherwise use regular fetch
+      let res;
+      if (token && authFetch) {
+        res = await authFetch("/api/chat", {
+          method: "POST",
+          body: JSON.stringify({ mode, messages: cleanMessages }),
+        });
+      } else {
+        // Guest mode — no auth required for basic chat
+        res = await fetch("https://studysphere-api-production.up.railway.app/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode, messages: cleanMessages }),
+        });
+      }
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: "Server error" }));
@@ -168,7 +183,6 @@ export default function Chat() {
       setMessages([...updatedMessages, assistantMessage]);
     } catch (err) {
       setError(getFriendlyError(err));
-      // Remove user message if it failed so they can try again
       setMessages(messages);
     } finally {
       setLoading(false);
@@ -191,20 +205,23 @@ export default function Chat() {
   return (
     <div className={styles.page} style={{ "--mode-color": config.color }}>
       <header className={styles.header}>
-        <button className={styles.back} onClick={() => navigate("/")}>
-          ← Back
+        <button className={styles.back} onClick={() => user ? navigate("/dashboard") : navigate("/")}>
+          ← {user ? "Dashboard" : "Home"}
         </button>
         <div className={styles.modeInfo}>
           <span className={styles.modeIcon}>{config.icon}</span>
           <span className={styles.modeLabel}>{config.label}</span>
+          {user && (
+            <span className={styles.userBadge}>
+              {user.subLevel || user.educationLevel || ""}
+            </span>
+          )}
         </div>
         <div className={styles.headerRight}>
           {isOffline && <span className={styles.offlineBadge}>Offline</span>}
           {saved && <span className={styles.savedBadge}>Saved</span>}
           {messages.length > 0 && (
-            <button className={styles.clearBtn} onClick={clearChat}>
-              Clear
-            </button>
+            <button className={styles.clearBtn} onClick={clearChat}>Clear</button>
           )}
         </div>
       </header>
@@ -214,6 +231,19 @@ export default function Chat() {
           <div className={styles.welcome}>
             <span className={styles.welcomeIcon}>{config.icon}</span>
             <p className={styles.welcomeText}>{config.welcome}</p>
+            {user && user.subjects?.length > 0 && (
+              <div className={styles.subjectHints}>
+                {user.subjects.slice(0, 4).map((s) => (
+                  <button
+                    key={s}
+                    className={styles.subjectHint}
+                    onClick={() => setInput(`Help me with ${s}`)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -259,9 +289,7 @@ export default function Chat() {
         {error && (
           <div className={styles.error}>
             ⚠️ {error}
-            <button className={styles.retryBtn} onClick={() => setError(null)}>
-              Dismiss
-            </button>
+            <button className={styles.retryBtn} onClick={() => setError(null)}>Dismiss</button>
           </div>
         )}
 
@@ -309,4 +337,4 @@ function formatResponse(text) {
     .replace(/\n/g, "<br/>")
     .replace(/^(?!<[hup])(.+)$/gm, "<p>$1</p>")
     .replace(/<p><\/p>/g, "");
-    }
+  }
