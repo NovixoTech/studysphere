@@ -308,3 +308,36 @@
   cursor: pointer;
   padding: 0;
 }
+
+.userBadge {
+  font-size: 0.72rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  border: 1px solid #3b82f620;
+}
+
+.subjectHints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.subjectHint {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.875rem;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-muted);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.subjectHint:hover {
+  border-color: var(--mode-color);
+  color: var(--mode-color);
+  }
