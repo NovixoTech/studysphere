@@ -72,7 +72,6 @@ export default function Feed() {
       ));
     } catch {}
   }
-
   const initial = (name) => name?.charAt(0)?.toUpperCase() || "S";
 
   return (
