@@ -5,10 +5,16 @@ import Chat from "./pages/Chat.jsx";
 import Login from "./pages/auth/Login.jsx";
 import Signup from "./pages/auth/Signup.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
+import Timetable from "./pages/timetable/Timetable.jsx";
+import Feed from "./pages/feed/Feed.jsx";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", fontSize: "1.5rem" }}>Loading...</div>;
+  if (loading) return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", fontSize: "1.5rem" }}>
+      Loading...
+    </div>
+  );
   if (!user) return <Navigate to="/login" replace />;
   return children;
 }
@@ -31,6 +37,8 @@ function AppRoutes() {
       {/* Protected */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/chat/:mode" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+      <Route path="/timetable" element={<ProtectedRoute><Timetable /></ProtectedRoute>} />
+      <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
@@ -44,4 +52,4 @@ export default function App() {
       <AppRoutes />
     </AuthProvider>
   );
-  }
+                 }
