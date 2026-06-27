@@ -5,7 +5,6 @@ import supabase from "../services/supabase.js";
 
 const router = Router();
 
-// Generate referral code
 function generateReferralCode(name) {
   const prefix = name.replace(/\s+/g, "").substring(0, 4).toUpperCase();
   const digits = Math.floor(100 + Math.random() * 900);
@@ -26,7 +25,6 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Name, email and password are required" });
     }
 
-    // Check if email exists
     const { data: existing } = await supabase
       .from("users")
       .select("id")
@@ -37,22 +35,13 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Email already registered" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Generate referral code
     const referralCode = generateReferralCode(name);
 
-    // Set currency based on country
-    const currencyMap = {
-      Nigeria: "NGN",
-      USA: "USD",
-      UK: "GBP",
-      India: "INR",
-    };
+    const currencyMap = { Nigeria: "NGN", USA: "USD", UK: "GBP", India: "INR" };
     const currency = currencyMap[country] || "USD";
 
-    // Save user
+    // Use lowercase column names to match Supabase
     const { data: user, error } = await supabase
       .from("users")
       .insert({
@@ -61,27 +50,27 @@ router.post("/signup", async (req, res) => {
         password: hashedPassword,
         country,
         currency,
-        educationLevel,
-        subLevel,
-        examType,
+        educationlevel: educationLevel,
+        sublevel: subLevel,
+        examtype: examType,
         subjects,
-        courseField,
-        courseName,
+        coursefield: courseField,
+        coursename: courseName,
         goal,
-        referralCode,
-        referredBy: referredBy || null,
+        referralcode: referralCode,
+        referredby: referredBy || null,
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    // If referred, give referrer +10 points
+    // Handle referral
     if (referredBy) {
       const { data: referrer } = await supabase
         .from("users")
-        .select("id, points, inviteCount")
-        .eq("referralCode", referredBy)
+        .select("id, points, invitecount")
+        .eq("referralcode", referredBy)
         .single();
 
       if (referrer) {
@@ -89,22 +78,19 @@ router.post("/signup", async (req, res) => {
           .from("users")
           .update({
             points: (referrer.points || 0) + 10,
-            inviteCount: (referrer.inviteCount || 0) + 1,
+            invitecount: (referrer.invitecount || 0) + 1,
           })
           .eq("id", referrer.id);
       }
     }
 
-    // Generate JWT
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    // Remove password from response
     const { password: _, ...safeUser } = user;
-
     res.status(201).json({ token, user: safeUser });
   } catch (err) {
     console.error("[signup]", err.message);
