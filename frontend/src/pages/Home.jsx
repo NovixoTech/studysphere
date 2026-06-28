@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
 
 const MODES = [
-  { id: "study", label: "Study", icon: "📖", description: "Understand any concept with clear, step-by-step explanations tailored to your level.", color: "var(--mode-study)" },
-  { id: "exam", label: "Exam Prep", icon: "🎯", description: "Practice questions, model answers, and examiner tips to ace your next test.", color: "var(--mode-exam)" },
-  { id: "homework", label: "Homework", icon: "✏️", description: "Get step-by-step help on assignments without just being handed the answer.", color: "var(--mode-homework)" },
-  { id: "revision", label: "Revision", icon: "🔁", description: "Summaries, flashcards, and revision notes to lock in what you've learned.", color: "var(--mode-revision)" },
-  { id: "motivation", label: "Motivation", icon: "⚡", description: "Study tips, encouragement, and support when things feel overwhelming.", color: "var(--mode-motivation)" },
+  { id: "study", label: "Study", description: "Understand any concept with clear, step-by-step explanations tailored to your level.", color: "var(--mode-study)" },
+  { id: "exam", label: "Exam Prep", description: "Practice questions, model answers, and examiner tips to ace your next test.", color: "var(--mode-exam)" },
+  { id: "homework", label: "Homework", description: "Get step-by-step help on assignments without just being handed the answer.", color: "var(--mode-homework)" },
+  { id: "revision", label: "Revision", description: "Summaries, flashcards, and revision notes to lock in what you've learned.", color: "var(--mode-revision)" },
+  { id: "motivation", label: "Motivation", description: "Study tips, encouragement, and support when things feel overwhelming.", color: "var(--mode-motivation)" },
 ];
 
 export default function Home() {
@@ -36,7 +36,7 @@ export default function Home() {
           </p>
           <div className={styles.heroBtns}>
             <button className={styles.heroBtn} onClick={() => navigate("/signup")}>
-              Get Started Free 🚀
+              Get Started Free 
             </button>
             <button className={styles.heroBtnSecondary} onClick={() => navigate("/login")}>
               Login
