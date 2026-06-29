@@ -16,7 +16,7 @@ export default function Home() {
       <header className={styles.header}>
         <div className={styles.logo}>
           <div className={styles.logoMark}>S</div>
-          <span className={styles.logoText}>StudySphere</span>
+          <span className={styles.logoText}>Logynis — Your AI Study Companion That Thinks With You</span>
         </div>
         <div className={styles.headerBtns}>
           <button className={styles.loginBtn} onClick={() => navigate("/login")}>Login</button>
@@ -24,7 +24,7 @@ export default function Home() {
         </div>
       </header>
       <main className={styles.main}>
-        <h1 className={styles.headline}>Your AI tutor,<br /><span className={styles.accent}>always ready.</span></h1>
+        <h1 className={styles.headline}>Your AI Study Companion,<br /><span className={styles.accent}> That Thinks With You.</span></h1>
         <p className={styles.sub}>Pick a mode and start learning. No sign-up needed to try.</p>
         <div className={styles.grid}>
           {MODES.map((m) => (
