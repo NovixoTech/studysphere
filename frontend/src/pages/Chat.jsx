@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import { IconStudy, IconExam, IconHomework, IconRevision, IconMotivation, IconSettings, IconUser, IconSend, IconPlus } from "../components/Icons.jsx";
+import { IconStudy, IconExam, IconHomework, IconRevision, IconMotivation, IconSettings, IconSend, IconPlus } from "../components/Icons.jsx";
 import styles from "./Chat.module.css";
 
 const MODES = [
@@ -44,7 +44,6 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [tooltip, setTooltip] = useState(null);
 
   const bottomRef = useRef(null);
   const taRef = useRef(null);
@@ -101,61 +100,30 @@ export default function Chat() {
 
   return (
     <div className={styles.layout}>
-      {/* Sidebar */}
-      <aside className={styles.sidebar}>
-        <div className={styles.logoWrap} onClick={() => navigate("/")}>
-          <img src="/logo.png" alt="Logynis" className={styles.logoMark} />
-        </div>
-        <nav className={styles.nav}>
-          {MODES.map(({ id, label, Icon, color }) => (
-            <button
-              key={id}
-              className={`${styles.navBtn} ${mode === id ? styles.navActive : ""}`}
-              style={mode === id ? { color, background: `${color}18` } : {}}
-              onClick={() => navigate(`/chat/${id}`)}
-              onMouseEnter={() => setTooltip(label)}
-              onMouseLeave={() => setTooltip(null)}
-              title={label}
-            >
-              <Icon size={20} />
-              {tooltip === label && <span className={styles.tip}>{label}</span>}
-            </button>
-          ))}
-        </nav>
-        <div className={styles.navBottom}>
-          {user ? (
-            <button
-              className={styles.navBtn}
-              onClick={() => navigate("/settings")}
-              onMouseEnter={() => setTooltip("Settings")}
-              onMouseLeave={() => setTooltip(null)}
-              title="Settings"
-            >
-              <IconSettings size={20} />
-              {tooltip === "Settings" && <span className={styles.tip}>Settings</span>}
-            </button>
-          ) : (
-            <button
-              className={styles.navBtn}
-              onClick={() => navigate("/login")}
-              onMouseEnter={() => setTooltip("Login")}
-              onMouseLeave={() => setTooltip(null)}
-              title="Login"
-            >
-              <IconUser size={20} />
-              {tooltip === "Login" && <span className={styles.tip}>Login</span>}
-            </button>
-          )}
-        </div>
-      </aside>
-
-      {/* Main */}
       <div className={styles.main}>
+
         {/* Topbar */}
         <div className={styles.topbar}>
-          <span className={styles.modeLabel} style={{ color: active.color }}>{active.label}</span>
+          <div className={styles.topLeft}>
+            <img src="/logo.png" alt="Logynis" className={styles.logoMark} onClick={() => navigate("/")} />
+            <select
+              className={styles.modeSelect}
+              value={mode}
+              onChange={e => navigate(`/chat/${e.target.value}`)}
+              style={{ color: active.color }}
+            >
+              {MODES.map(m => (
+                <option key={m.id} value={m.id}>{m.label}</option>
+              ))}
+            </select>
+          </div>
           <div className={styles.topRight}>
             {user && <span className={styles.userChip}>{user.name?.split(" ")[0]}</span>}
+            {user && (
+              <button className={styles.navBtn} onClick={() => navigate("/settings")} title="Settings">
+                <IconSettings size={18} />
+              </button>
+            )}
             {messages.length > 0 && (
               <button className={styles.newBtn} onClick={() => { setMessages([]); localStorage.removeItem(getKey(mode, userId)); }} title="New chat">
                 <IconPlus size={14} />
@@ -182,9 +150,6 @@ export default function Chat() {
 
           {messages.map((msg, i) => (
             <div key={i} className={`${styles.msg} ${msg.role === "user" ? styles.user : styles.ai}`}>
-              {msg.role === "assistant" && (
-                <div className={styles.aiIcon} style={{ color: active.color }}><active.Icon size={15} /></div>
-              )}
               <div className={styles.msgWrap}>
                 <div
                   className={`${styles.bubble} ${msg.role === "assistant" ? `${styles.aiBubble} ai-response` : styles.userBubble}`}
@@ -197,7 +162,6 @@ export default function Chat() {
 
           {loading && (
             <div className={`${styles.msg} ${styles.ai}`}>
-              <div className={styles.aiIcon} style={{ color: active.color }}><active.Icon size={15} /></div>
               <div className={styles.msgWrap}>
                 <div className={`${styles.bubble} ${styles.aiBubble}`}>
                   <div className={styles.dots}><span/><span/><span/></div>
@@ -242,4 +206,4 @@ export default function Chat() {
       </div>
     </div>
   );
-}
+   }
