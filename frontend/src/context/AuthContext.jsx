@@ -27,11 +27,11 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function login( password) {
+  async function login(name, password) {
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ name, password }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Login failed");
