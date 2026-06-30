@@ -26,13 +26,14 @@ router.post("/signup", async (req, res) => {
     }
 
     const { data: existing } = await supabase
-      .from("users")
-      .select("id") 
-      .single();
+  .from("users")
+  .select("id")
+  .eq("name", name)
+  .maybeSingle();
 
-    if (existing) {
-      return res.status(400).json({ error: "Email already registered" });
-    }
+if (existing) {
+  return res.status(400).json({ error: "User already exists" });
+}
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const referralCode = generateReferralCode(name);
@@ -99,20 +100,17 @@ router.post("/signup", async (req, res) => {
 // POST /auth/login
 router.post("/login", async (req, res) => {
   try {
-    const { password } = req.body;
+    const { name, password } = req.body;
 
-    if ( !password) {
-      return res.status(400).json({ error: "Password are required" });
-    }
+const { data: user, error } = await supabase
+  .from("users")
+  .select("*")
+  .eq("name", name)
+  .maybeSingle();
 
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("*") 
-      .single();
-
-    if (error || !user) {
-      return res.status(401).json({ error: "Invalid password" });
-    }
+if (!user) {
+  return res.status(401).json({ error: "User not found" });
+} 
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
