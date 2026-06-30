@@ -42,13 +42,7 @@ export default function Settings() {
             <label className={styles.label}>Name</label>
             <input className={styles.input} value={name} onChange={e => setName(e.target.value)} />
           </div>
-          <div className={styles.field}>
-            <label className={styles.label}>Email</label>
-            <div className={styles.value}>{user?.email}</div>
-          </div>
-          <button className={styles.saveBtn} onClick={save} disabled={saving}>{saving ? "Saving..." : "Save changes"}</button>
-        </div>
-        <div className={styles.section}>
+         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>Session</h2>
           <button className={styles.logoutBtn} onClick={() => { logout(); navigate("/"); }}>
             <IconLogout size={16} /> Logout
