@@ -21,7 +21,7 @@ export default function Login() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}><div className={styles.logoMark}>S</div><span className={styles.logoText}>StudySphere</span></div>
+        <img src="/logo.png" alt="Logynis" className={styles.logoMark} />
         <h1 className={styles.title}>Welcome back</h1>
         <p className={styles.sub}>Login to continue learning</p>
         {error && <div className={styles.error}>{error}</div>}
