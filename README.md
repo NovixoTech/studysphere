@@ -1,4 +1,4 @@
-# StudySphere 🎓
+# Logynis 🎓
 
 AI-powered tutoring app with 5 study modes. Built with React, Node.js/Express, and the NovixoTech open source ecosystem.
 
