@@ -15,11 +15,11 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  async function signup(name, email, password) {
+  async function signup(name, password) {
     const res = await fetch(`${API}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, password }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Signup failed");
@@ -27,11 +27,11 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function login(email, password) {
+  async function login( password) {
     const res = await fetch(`${API}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ password }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Login failed");
