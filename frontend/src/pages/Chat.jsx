@@ -103,7 +103,7 @@ export default function Chat() {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.logoWrap} onClick={() => navigate("/")}>
-          <div className={styles.logoMark}>S</div>
+          <img src="/logo.png" alt="Logynis" className={styles.logoMark} />
         </div>
         <nav className={styles.nav}>
           {MODES.map(({ id, label, Icon, color }) => (
@@ -241,4 +241,4 @@ export default function Chat() {
       </div>
     </div>
   );
-         }
+    }
