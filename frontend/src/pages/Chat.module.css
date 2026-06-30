@@ -48,13 +48,13 @@
 .errDismiss { font-size: 1rem; color: var(--error); padding: 0 0.25rem; }
 
 /* Input */
-.inputWrap { padding: 0.875rem 1.25rem 1.25rem; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
-.inputBox { display: flex; gap: 0.5rem; align-items: flex-end; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 0.5rem 0.5rem 0.5rem 0.875rem; transition: border-color 0.2s; }
-.inputBox:focus-within { border-color: var(--accent); }
-.textarea { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 0.9375rem; line-height: 1.5; resize: none; min-height: 24px; max-height: 140px; padding: 0.25rem 0; }
-.textarea::placeholder { color: var(--text-muted); }
+.inputWrap { padding: 1rem 1.25rem 1.5rem; border-top: none; background: var(--surface); flex-shrink: 0; max-width: 760px; width: 100%; margin: 0 auto; }
+.inputBox { display: flex; gap: 0.75rem; align-items: flex-end; background: none; border: none; border-radius: 0; padding: 0; transition: none; }
+.inputBox:focus-within { border-color: transparent; }
+.textarea { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 1.0625rem; font-weight: 500; line-height: 1.6; resize: none; min-height: 28px; max-height: 160px; padding: 0.5rem 0; }
+.textarea::placeholder { color: var(--text-muted); font-weight: 500; }
 .textarea:disabled { opacity: 0.5; }
-.sendBtn { width: 34px; height: 34px; background: var(--border); color: #fff; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; }
+.sendBtn { width: 36px; height: 36px; background: var(--border); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s, transform 0.1s; margin-bottom: 0.25rem; }
 .sendBtn:not(:disabled):hover { transform: scale(1.05); }
 .sendBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 .hint { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.4rem; text-align: center; }
