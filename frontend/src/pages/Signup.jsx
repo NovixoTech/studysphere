@@ -23,7 +23,7 @@ export default function Signup() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}><div className={styles.logoMark}>S</div><span className={styles.logoText}>StudySphere</span></div>
+        <img src="/logo.png" alt="Logynis" className={styles.logoMark} />
         <h1 className={styles.title}>Create account</h1>
         <p className={styles.sub}>Free forever. No credit card needed.</p>
         {error && <div className={styles.error}>{error}</div>}
