@@ -26,14 +26,14 @@ router.post("/signup", async (req, res) => {
     }
 
     const { data: existing } = await supabase
-  .from("users")
-  .select("id")
-  .eq("name", name)
-  .maybeSingle();
+      .from("users")
+      .select("id")
+      .eq("name", name)
+      .maybeSingle();
 
-if (existing) {
-  return res.status(400).json({ error: "User already exists" });
-}
+    if (existing) {
+      return res.status(400).json({ error: "User already exists" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const referralCode = generateReferralCode(name);
@@ -41,7 +41,6 @@ if (existing) {
     const currencyMap = { Nigeria: "NGN", USA: "USD", UK: "GBP", India: "INR" };
     const currency = currencyMap[country] || "USD";
 
-    // Use lowercase column names to match Supabase
     const { data: user, error } = await supabase
       .from("users")
       .insert({
@@ -102,15 +101,15 @@ router.post("/login", async (req, res) => {
   try {
     const { name, password } = req.body;
 
-const { data: user, error } = await supabase
-  .from("users")
-  .select("*")
-  .eq("name", name)
-  .maybeSingle();
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .ilike("name", name)
+      .maybeSingle();
 
-if (!user) {
-  return res.status(401).json({ error: "User not found" });
-} 
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
