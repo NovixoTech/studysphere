@@ -214,7 +214,7 @@ export default function Chat() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
+       {/* Input */}
         <div className={styles.inputWrap}>
           <div className={styles.inputBox}>
             <textarea
