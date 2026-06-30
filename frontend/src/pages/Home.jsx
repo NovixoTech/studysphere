@@ -15,7 +15,7 @@ export default function Home() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <div className={styles.logoMark}>logo.png</div>
+          <img src="/logo.png" alt="Logynis" className={styles.logoMark} />
           <span className={styles.logoText}>Logynis</span>
         </div>
         <div className={styles.headerBtns}>
