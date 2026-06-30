@@ -15,20 +15,19 @@ function generateReferralCode(name) {
 router.post("/signup", async (req, res) => {
   try {
     const {
-      name, email, password, country,
+      name, password, country,
       educationLevel, subLevel, examType,
       subjects, courseField, courseName, goal,
       referredBy
     } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email and password are required" });
+    if (!name || !password) {
+      return res.status(400).json({ error: "Name and password are required" });
     }
 
     const { data: existing } = await supabase
       .from("users")
-      .select("id")
-      .eq("email", email)
+      .select("id") 
       .single();
 
     if (existing) {
@@ -46,7 +45,6 @@ router.post("/signup", async (req, res) => {
       .from("users")
       .insert({
         name,
-        email,
         password: hashedPassword,
         country,
         currency,
@@ -85,7 +83,7 @@ router.post("/signup", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
@@ -101,29 +99,28 @@ router.post("/signup", async (req, res) => {
 // POST /auth/login
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if ( !password) {
+      return res.status(400).json({ error: "Password are required" });
     }
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("*")
-      .eq("email", email)
+      .select("*") 
       .single();
 
     if (error || !user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid password" });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid password" });
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
