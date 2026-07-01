@@ -15,11 +15,11 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  async function signup(name, password) {
+  async function signup(name, password, extra = {}) {
     const res = await fetch(`${API}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, password }),
+      body: JSON.stringify({ name, password, ...extra }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Signup failed");
