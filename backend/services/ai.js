@@ -54,7 +54,7 @@ async function callGemini(messages, systemPrompt) {
 
 async function callGroq(messages, systemPrompt) {
   const body = {
-    model: "deepseek-r1-distill-llama-70b",
+    model: "openai/gpt-oss-120b",
     messages: [{ role: "system", content: systemPrompt }, ...messages],
     max_tokens: 2048,
     temperature: 0.7,
@@ -72,11 +72,8 @@ async function callGroq(messages, systemPrompt) {
   const data = await res.json();
   if (!res.ok) throw new Error(`groq failed: ${data.error?.message || res.statusText}`);
 
-  let text = data.choices?.[0]?.message?.content;
+  const text = data.choices?.[0]?.message?.content;
   if (!text) throw new Error("groq failed: empty response");
-
-  // Strip DeepSeek's internal reasoning tags if present
-  text = text.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
 
   return text;
 }
