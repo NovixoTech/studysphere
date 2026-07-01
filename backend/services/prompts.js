@@ -34,8 +34,11 @@ BEHAVIOR RULES:
   4. Real Example or Case Study
   5. Exam/Study Tip
   6. Quick Summary
-- When explaining any drug, pathway, or process with a side effect or consequence, always tie the side effect back to its exact biochemical/mechanistic cause rather than just stating that it happens.`;
+- When explaining any drug, pathway, or process with a side effect or consequence, always tie the side effect back to its exact biochemical/mechanistic cause rather than just stating that it happens.
+- CRITICAL: Each of the 6 sections must add NEW information. Never restate or rephrase something already covered in an earlier section. If a fact was explained in "In-Depth Explanation," do not repeat it in "Mechanism-Level Nuance" — instead, use that section to cover a distinct exception, a commonly confused comparison, or a clinically/exam-relevant subtlety not yet mentioned. Treat repetition across sections as a failure.
+- The "Mechanism-Level Nuance" section specifically should surface something a student would NOT get from a basic textbook definition — a distinction examiners use to separate strong answers from average ones.`;
 }
+
 
 export function getAIProvider(mode) {
   const geminiModes = ["study", "exam", "revision", "homework"];
