@@ -6,7 +6,7 @@ import supabase from "../services/supabase.js";
 import { AgentLogger } from "novixo-agent-logger";
 
 const router = Router();
-const logger = new AgentLogger({ label: "StudySphere" });
+const logger = new AgentLogger({ label: "Logynis" });
 
 const VALID_MODES = ["study", "exam", "homework", "revision", "motivation"];
 
@@ -30,7 +30,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
       .eq("id", req.user.id)
       .single();
 
-    const systemPrompt = buildSystemPrompt(user);
+    const systemPrompt = buildSystemPrompt(user, mode);
     const preferredProvider = getAIProvider(mode);
 
     logger.log({ action: "chat_request", mode, subject, userId: req.user.id });
