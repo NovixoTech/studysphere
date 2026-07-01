@@ -1,19 +1,110 @@
-import { NovixoAI } from "novixo-ai";
+import crypto from "crypto";
 
-const ai = new NovixoAI({
-  keys: {
-    groq: process.env.GROQ_API_KEY,
-    gemini: process.env.GEMINI_API_KEY,
-  },
-  providers: ["gemini", "groq"],
-  models: {
-    groq: "llama-3.3-70b-versatile",
-    gemini: "gemini-2.0-flash",
-  },
-  maxTokens: 2048,
-  temperature: 0.7,
-  cache: true,
-  cacheTTL: 3 * 60 * 1000,
-});
+const cacheStore = new Map();
+const CACHE_TTL = 3 * 60 * 1000;
 
+function getCacheKey(messages, systemPrompt) {
+  const raw = JSON.stringify({ messages, systemPrompt });
+  return crypto.createHash("md5").update(raw).digest("hex");
+}
+
+function getFromCache(key) {
+  const entry = cacheStore.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.time > CACHE_TTL) {
+    cacheStore.delete(key);
+    return null;
+  }
+  return entry.value;
+}
+
+function setCache(key, value) {
+  cacheStore.set(key, { value, time: Date.now() });
+}
+
+async function callGemini(messages, systemPrompt) {
+  const contents = messages.map(m => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+
+  const body = {
+    contents,
+    systemInstruction: { parts: [{ text: systemPrompt }] },
+    generationConfig: { maxOutputTokens: 2048, temperature: 0.7 },
+  };
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }
+  );
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(`gemini failed: ${data.error?.message || res.statusText}`);
+
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error("gemini failed: empty response");
+
+  return text;
+}
+
+async function callGroq(messages, systemPrompt) {
+  const body = {
+    model: "llama-3.3-70b-versatile",
+    messages: [{ role: "system", content: systemPrompt }, ...messages],
+    max_tokens: 2048,
+    temperature: 0.7,
+  };
+
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(`groq failed: ${data.error?.message || res.statusText}`);
+
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error("groq failed: empty response");
+
+  return text;
+}
+
+async function chat(messages, { systemPrompt, providers = ["gemini", "groq"] }) {
+  const cacheKey = getCacheKey(messages, systemPrompt);
+  const cached = getFromCache(cacheKey);
+  if (cached) return { text: cached.text, provider: cached.provider, cached: true };
+
+  const errors = [];
+
+  for (const provider of providers) {
+    try {
+      let text;
+      if (provider === "gemini") {
+        text = await callGemini(messages, systemPrompt);
+      } else if (provider === "groq") {
+        text = await callGroq(messages, systemPrompt);
+      } else {
+        continue;
+      }
+      setCache(cacheKey, { text, provider });
+      return { text, provider, cached: false, errors };
+    } catch (err) {
+      console.error(`[AI_PROVIDER_ERROR] ${provider}:`, err.message);
+      errors.push({ provider, message: err.message });
+    }
+  }
+
+  throw new Error(`All providers failed: ${errors.map(e => `${e.provider}: ${e.message}`).join(" | ")}`);
+}
+
+const ai = { chat };
 export default ai;
