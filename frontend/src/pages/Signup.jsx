@@ -14,6 +14,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [educationLevel, setEducationLevel] = useState("");
   const [examType, setExamType] = useState("");
+  const [customExamType, setCustomExamType] = useState("");
   const [courseName, setCourseName] = useState("");
   const [subjectBoxes, setSubjectBoxes] = useState(["", "", ""]);
 
@@ -45,7 +46,12 @@ export default function Signup() {
   }
 
   async function handleFinish() {
-    if (educationLevel === "Entrance Exam" && !examType) { setError("Please select your exam type"); return; }
+    const finalExamType = examType === "Other" ? customExamType.trim() : examType;
+
+    if (educationLevel === "Entrance Exam" && !finalExamType) {
+      setError("Please select or enter your exam type");
+      return;
+    }
     if (educationLevel === "Tertiary Institution" && !courseName) { setError("Please enter your course name"); return; }
 
     const subjects = subjectBoxes.map(s => s.trim()).filter(Boolean);
@@ -55,7 +61,7 @@ export default function Signup() {
     try {
       await signup(name, password, {
         educationLevel,
-        examType: educationLevel === "Entrance Exam" ? examType : undefined,
+        examType: educationLevel === "Entrance Exam" ? finalExamType : undefined,
         courseName: educationLevel === "Tertiary Institution" ? courseName : undefined,
         subjects: subjects.join(", "),
       });
@@ -115,6 +121,15 @@ export default function Signup() {
                   <option value="">Select exam type</option>
                   {EXAM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
+                {examType === "Other" && (
+                  <input
+                    className={styles.input}
+                    style={{ marginTop: "0.5rem" }}
+                    placeholder="Enter your exam name"
+                    value={customExamType}
+                    onChange={e => setCustomExamType(e.target.value)}
+                  />
+                )}
               </div>
             )}
 
@@ -173,4 +188,4 @@ export default function Signup() {
       </div>
     </div>
   );
-}
+        }
