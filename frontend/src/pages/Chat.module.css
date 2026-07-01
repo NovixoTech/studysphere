@@ -24,7 +24,7 @@
 .user { flex-direction: row-reverse; }
 .msgWrap { display: flex; flex-direction: column; gap: 0.2rem; max-width: 78%; }
 .user .msgWrap { align-items: flex-end; margin-left: auto; }
-.bubble { padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.9375rem; line-height: 1.65; }
+.bubble { padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 1.05rem; line-height: 1.75; }
 .aiBubble { background: transparent; border: none; color: var(--text); padding-left: 0; }
 .userBubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
 .via { font-size: 0.68rem; color: var(--text-muted); padding-left: 0.25rem; }
