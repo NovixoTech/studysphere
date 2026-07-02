@@ -19,42 +19,8 @@ function load(mode, userId) { try { return JSON.parse(localStorage.getItem(getKe
 function save(mode, userId, msgs) { try { localStorage.setItem(getKey(mode, userId), JSON.stringify(msgs.slice(-50))); } catch {} }
 
 function formatResponse(text) {
-  let escaped = text
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-  // Convert markdown tables to HTML tables first, before other processing
-  escaped = escaped.replace(
-    /((?:^\|.+\|$\n?)+)/gm,
-    (block) => {
-      const lines = block.trim().split("\n").filter(Boolean);
-      if (lines.length < 2) return block;
-
-      const isSeparator = /^\|?[\s:|-]+\|?$/.test(lines[1]);
-      if (!isSeparator) return block;
-
-      const parseCells = (line) =>
-        line.replace(/^\||\|$/g, "").split("|").map(c => c.trim());
-
-      const headerCells = parseCells(lines[0]);
-      const bodyLines = lines.slice(2);
-
-      let html = "<table class='md-table'><thead><tr>";
-      headerCells.forEach(cell => { html += `<th>${cell}</th>`; });
-      html += "</tr></thead><tbody>";
-
-      bodyLines.forEach(line => {
-        const cells = parseCells(line);
-        html += "<tr>";
-        cells.forEach(cell => { html += `<td>${cell}</td>`; });
-        html += "</tr>";
-      });
-
-      html += "</tbody></table>";
-      return html;
-    }
-  );
-
-  return escaped
+  return text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
     .replace(/`([^`]+)`/g, "<code>$1</code>")
@@ -63,11 +29,9 @@ function formatResponse(text) {
     .replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>")
     .replace(/\n{2,}/g, "</p><p>")
     .replace(/\n/g, "<br/>")
-    .replace(/^(?!<[hutld])(.+)$/gm, "<p>$1</p>")
-    .replace(/<p><\/p>/g, "")
-    .replace(/<p>(<table)/g, "$1")
-    .replace(/(<\/table>)<\/p>/g, "$1");
-          }
+    .replace(/^(?!<[hup])(.+)$/gm, "<p>$1</p>")
+    .replace(/<p><\/p>/g, "");
+}
 
 export default function Chat() {
   const { mode = "study" } = useParams();
