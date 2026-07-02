@@ -13,6 +13,7 @@ export default function Settings() {
   const [examType, setExamType] = useState(user?.examtype || "");
   const [courseName, setCourseName] = useState(user?.coursename || "");
   const [subjects, setSubjects] = useState(user?.subjects || "");
+  const [currentClass, setCurrentClass] = useState(user?.currentclass || "");
 
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -36,6 +37,7 @@ export default function Settings() {
           examType,
           courseName,
           subjects,
+          currentClass,
         }),
       });
 
@@ -133,6 +135,21 @@ export default function Settings() {
               onChange={(e) => setSubjects(e.target.value)}
               placeholder="e.g. Maths, Physics, English"
             />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Current Class / Level</label>
+            <input
+              className={styles.input}
+              value={currentClass}
+              onChange={(e) => setCurrentClass(e.target.value)}
+              placeholder="e.g. JSS2, SS3, Undergraduate, Postgraduate, Masters"
+            />
+            {user?.classupdatedat && (
+              <p style={{ fontSize: "0.75rem", color: "#888", marginTop: "0.25rem" }}>
+                Last updated: {new Date(user.classupdatedat).toLocaleDateString()}
+              </p>
+            )}
           </div>
 
           <button
