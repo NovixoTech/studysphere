@@ -6,6 +6,7 @@ import authRouter from "./routes/auth.js";
 import userRouter from "./routes/user.js";
 import examRouter from "./routes/exam.js";
 import feedRouter from "./routes/feed.js";
+import conversationsRouter from "./routes/conversations.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/user", userRouter);
 app.use("/api/chat", chatRouter);
 app.use("/exam", examRouter);
 app.use("/feed", feedRouter);
+app.use("/conversations", conversationsRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -36,5 +38,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`StudySphere API running on port ${PORT}`);
+  console.log(`Logynis API running on port ${PORT}`);
 });
