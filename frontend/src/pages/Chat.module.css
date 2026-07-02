@@ -24,14 +24,8 @@
 .user { flex-direction: row-reverse; }
 .msgWrap { display: flex; flex-direction: column; gap: 0.2rem; max-width: 78%; }
 .user .msgWrap { align-items: flex-end; margin-left: auto; }
-.bubble { padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.9375rem; line-height: 1.7; }
-.aiBubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--text); box-shadow: var(--shadow-sm); }
-.aiBubble :global(h3) { font-size: 1rem; font-weight: 700; margin: 1rem 0 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
-.aiBubble :global(h3:first-child) { margin-top: 0; padding-top: 0; border-top: none; }
-.aiBubble :global(p) { margin: 0.5rem 0; }
-.aiBubble :global(ul) { margin: 0.5rem 0; padding-left: 1.25rem; }
-.aiBubble :global(li) { margin: 0.25rem 0; }
-.aiBubble :global(code) { background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+.bubble { padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 1.05rem; line-height: 1.75; }
+.aiBubble { background: transparent; border: none; color: var(--text); padding-left: 0; }
 .userBubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
 .via { font-size: 0.68rem; color: var(--text-muted); padding-left: 0.25rem; }
 
