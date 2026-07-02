@@ -81,14 +81,18 @@ router.post("/", authMiddleware, async (req, res, next) => {
     }
 
     // Save chat to Supabase, linked to the conversation
-    await supabase.from("chats").insert({
-      userId: req.user.id,
-      conversationid: activeConversationId,
-      message: lastUserMessage,
-      response: response.text,
-      mode,
-      subject: subject || null,
-    });
+    const { error: chatInsertError } = await supabase.from("chats").insert({
+  userid: req.user.id,
+  conversationid: activeConversationId,
+  message: lastUserMessage,
+  response: response.text,
+  mode,
+  subject: subject || null,
+});
+
+if (chatInsertError) {
+  console.error("[CHAT_INSERT_ERROR]", chatInsertError.message);
+}
 
     // Award +5 points
     await supabase
