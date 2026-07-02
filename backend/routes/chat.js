@@ -1,6 +1,6 @@
 import { Router } from "express";
 import ai from "../services/ai.js";
-import { buildSystemPrompt, getAIProvider } from "../services/prompts.js";
+import { buildSystemPrompt } from "../services/prompts.js";
 import { authMiddleware } from "../middleware/auth.js";
 import supabase from "../services/supabase.js";
 import { AgentLogger } from "novixo-agent-logger";
@@ -31,7 +31,6 @@ router.post("/", authMiddleware, async (req, res, next) => {
       .single();
 
     const systemPrompt = buildSystemPrompt(user, mode);
-    const preferredProvider = getAIProvider(mode);
 
     logger.log({ action: "chat_request", mode, subject, userId: req.user.id });
 
@@ -41,7 +40,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
     try {
       response = await ai.chat(messages, {
         systemPrompt,
-        providers: [preferredProvider, preferredProvider === "groq" ? "gemini" : "groq"],
+        providers: ["cerebras", "groq", "gemini"],
       });
     } catch (aiErr) {
       console.error("[AI_ERROR]", aiErr.message, aiErr.stack);
