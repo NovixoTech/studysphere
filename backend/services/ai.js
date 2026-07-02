@@ -22,39 +22,9 @@ function setCache(key, value) {
   cacheStore.set(key, { value, time: Date.now() });
 }
 
-async function callGemini(messages, systemPrompt) {
-  const contents = messages.map(m => ({
-    role: m.role === "assistant" ? "model" : "user",
-    parts: [{ text: m.content }],
-  }));
-
+async function callGroq(messages, systemPrompt, model) {
   const body = {
-    contents,
-    systemInstruction: { parts: [{ text: systemPrompt }] },
-    generationConfig: { maxOutputTokens: 2048, temperature: 0.7 },
-  };
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }
-  );
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(`gemini failed: ${data.error?.message || res.statusText}`);
-
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("gemini failed: empty response");
-
-  return text;
-}
-
-async function callGroq(messages, systemPrompt) {
-  const body = {
-    model: "llama-3.3-70b-versatile",
+    model: model,
     messages: [{ role: "system", content: systemPrompt }, ...messages],
     max_tokens: 2048,
     temperature: 0.7,
@@ -78,7 +48,7 @@ async function callGroq(messages, systemPrompt) {
   return text;
 }
 
-async function chat(messages, { systemPrompt, providers = ["groq", "gemini"] }) {
+async function chat(messages, { systemPrompt, providers = ["groq-primary", "groq-fallback"] }) {
   const cacheKey = getCacheKey(messages, systemPrompt);
   const cached = getFromCache(cacheKey);
   if (cached) return { text: cached.text, provider: cached.provider, cached: true };
@@ -88,10 +58,10 @@ async function chat(messages, { systemPrompt, providers = ["groq", "gemini"] }) 
   for (const provider of providers) {
     try {
       let text;
-      if (provider === "gemini") {
-        text = await callGemini(messages, systemPrompt);
-      } else if (provider === "groq") {
-        text = await callGroq(messages, systemPrompt);
+      if (provider === "groq-primary") {
+        text = await callGroq(messages, systemPrompt, "openai/gpt-oss-120b");
+      } else if (provider === "groq-fallback") {
+        text = await callGroq(messages, systemPrompt, "qwen/qwen3.6-27b");
       } else {
         continue;
       }
