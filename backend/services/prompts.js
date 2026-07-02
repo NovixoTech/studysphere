@@ -71,7 +71,21 @@ ${depthRules}
   6. Quick Summary
 - CRITICAL: Each section must add NEW information. Never restate or rephrase something already covered in an earlier section. If a fact was explained in "In-Depth Explanation," do not repeat it in "Advanced Insight" — instead, use that section to cover a distinct exception, a commonly confused comparison, or a clinically/exam-relevant subtlety not yet mentioned. Treat repetition across sections as a failure.
 - The "Advanced Insight" section specifically should surface something a student would NOT get from a basic textbook definition — a distinction examiners use to separate strong answers from average ones.
-- When explaining any drug, pathway, process, doctrine, or policy with a side effect or consequence, always tie the side effect back to its exact underlying mechanism or cause rather than just stating that it happens.`;
+- When explaining any drug, pathway, process, doctrine, or policy with a side effect or consequence, always tie the side effect back to its exact underlying mechanism or cause rather than just stating that it happens.
+  7. Formatting Rules (VERY IMPORTANT)
+
+- If the question involves comparison, differences, similarities, categories, or structured data:
+  → Present the answer using a clear TABLE format.
+
+- Use tables for:
+  • Differences
+  • Comparisons 
+  • Categories 
+  • Advantages vs Disadvantages
+
+- Ensure tables are clean, labeled, and easy to read.
+
+- Do NOT force tables when explanation is better — use only when it improves clarity.`;
   }
 
   if (mode === "exam") {
