@@ -10,10 +10,15 @@ const logger = new AgentLogger({ label: "Logynis" });
 
 const VALID_MODES = ["study", "exam", "homework", "revision", "motivation"];
 
+function makeTitle(text) {
+  const clean = text.trim().replace(/\s+/g, " ");
+  return clean.length > 50 ? clean.slice(0, 50) + "..." : clean;
+}
+
 // POST /api/chat
 router.post("/", authMiddleware, async (req, res, next) => {
   try {
-    const { mode = "study", messages, subject } = req.body;
+    const { mode = "study", messages, subject, conversationId } = req.body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "messages array is required" });
@@ -49,10 +54,37 @@ router.post("/", authMiddleware, async (req, res, next) => {
 
     console.log("[AI_DEBUG] provider used:", response.provider, "| errors:", response.errors || "none");
 
-    // Save chat to Supabase
+    const lastUserMessage = messages[messages.length - 1]?.content;
+
+    // Create a new conversation if one wasn't passed in
+    let activeConversationId = conversationId;
+    if (!activeConversationId) {
+      const { data: newConvo, error: convoErr } = await supabase
+        .from("conversations")
+        .insert({
+          userid: req.user.id,
+          mode,
+          title: makeTitle(lastUserMessage),
+        })
+        .select()
+        .single();
+
+      if (convoErr) throw convoErr;
+      activeConversationId = newConvo.id;
+    } else {
+      // Touch updatedat so it bubbles to top of recent chats
+      await supabase
+        .from("conversations")
+        .update({ updatedat: new Date().toISOString() })
+        .eq("id", activeConversationId)
+        .eq("userid", req.user.id);
+    }
+
+    // Save chat to Supabase, linked to the conversation
     await supabase.from("chats").insert({
       userId: req.user.id,
-      message: messages[messages.length - 1]?.content,
+      conversationid: activeConversationId,
+      message: lastUserMessage,
       response: response.text,
       mode,
       subject: subject || null,
@@ -78,6 +110,7 @@ router.post("/", authMiddleware, async (req, res, next) => {
       provider: response.provider,
       mode,
       cached: response.cached,
+      conversationId: activeConversationId,
     });
   } catch (err) {
     logger.log({ action: "chat_error", error: err.message });
@@ -97,11 +130,11 @@ async function updateStreak(userId, user) {
     let newStreak = user?.streak || 0;
 
     if (lastDate === today) {
-      return; // Already studied today
+      return;
     } else if (lastDate === yesterday) {
-      newStreak += 1; // Keep streak going
+      newStreak += 1;
     } else {
-      newStreak = 1; // Reset
+      newStreak = 1;
     }
 
     await supabase
